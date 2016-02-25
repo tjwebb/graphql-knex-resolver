@@ -1,1 +1,0 @@
-exports.trailpack = require('./trailpack')
