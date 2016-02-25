@@ -1,5 +1,6 @@
 'use strict'
 
+const assert = require('assert')
 const graphql = require('graphql')
 const lib = require('./lib')
 
@@ -12,6 +13,8 @@ exports.Query = class Query {
    */
   constructor (gql) {
     this.ast = graphql.parse(gql)
+
+    assert.equal(this.ast.kind, 'Document', 'The GraphQL query must be a complete Document')
   }
 
   /**
