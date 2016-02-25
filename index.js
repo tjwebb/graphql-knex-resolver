@@ -18,7 +18,7 @@ exports.Query = class Query {
    * Construct a knex query
    */
   toKnexQuery (knex, args) {
-    const sql = lib.QueryBuilder.buildSQL(this.parsedQuery, knex)
+    const sql = lib.QueryBuilder.buildSQL(this.ast, knex)
     return knex.raw(sql, args)
   }
 }
