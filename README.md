@@ -30,6 +30,7 @@ const knex = require('knex')({
 const gqlQuery = new Query(`
   query favoriteColorQuery ($name: String!) {
     person(name: $name) {
+      name
       favoriteColor
     }
   }`
