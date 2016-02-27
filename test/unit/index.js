@@ -11,17 +11,19 @@ describe('Query', () => {
       filename: './testdb.sqlite'
     }
   })
+
   const gqlA = `
     query favoriteColorQuery ($name: String!) {
       person(name: $nameArg) {
+        name
         favoriteColor
       }
     }`
+
   describe('#constructor', () => {
     it('should set ast for valid gql query', () => {
       const query = new Query(gqlA)
       assert(query.ast)
-      //console.log(util.inspect(query.ast, { depth: 4 }))
     })
   })
 
@@ -33,7 +35,7 @@ describe('Query', () => {
           nameArg: 'tjwebb'
         })
 
-        assert.equal(kql.toString(), 'select * from "person" where name = "tjwebb"')
+        assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where name = "tjwebb"')
       })
     })
 
