@@ -59,10 +59,11 @@ const userQuery = new gql.GraphQLObjectType({
 const userSchema = new gql.GraphQLSchema({
   query: userQuery
 })
-```js
+```
 
 ### 3. Execute a Query
-```
+
+```js
 const findUserByUsername = `{
   user (username: $username) {
     id
@@ -99,6 +100,7 @@ Using the `findUserByUsername` query above.
 
 
 ##### Simple Select Statement
+
 ```js
 const sql = resolver.toSQL(findUserByUsername, 'pg', {
   username: 'tjwebb'
