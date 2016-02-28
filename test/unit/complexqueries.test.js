@@ -4,7 +4,7 @@ const util = require('util')
 const assert = require('assert')
 const gql = require('graphql')
 const lib = require('../../lib')
-const Resolver = require('../../').Resolver
+const Resolver = require('../../')
 
 describe('Schema-Dependent GraphQL Queries', () => {
   const knex = require('knex')({
@@ -15,7 +15,7 @@ describe('Schema-Dependent GraphQL Queries', () => {
     debug: true
   })
 
-  let resolver = new Resolver(knex).getResolver()
+  let resolver = Resolver.getResolver(knex)
 
   before(done => {
     return knex.schema.dropTableIfExists('user')

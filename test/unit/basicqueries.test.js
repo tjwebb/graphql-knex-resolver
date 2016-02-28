@@ -2,7 +2,7 @@
 
 const util = require('util')
 const assert = require('assert')
-const Query = require('../../').Query
+const resolver = require('../../')
 
 describe('Basic/Parameterized GraphQL Queries', () => {
   let knex
@@ -69,44 +69,38 @@ describe('Basic/Parameterized GraphQL Queries', () => {
   }
 
   it('should generate correct SQL for basic query without prefix', () => {
-    const query = new Query(queries.omitPrefix)
-    const kql = query.toSQL(knex)
+    const kql = resolver.toSQL(queries.omitPrefix, 'pg')
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person"')
   })
 
   it('should generate correct SQL for basic query with where clause', () => {
-    const query = new Query(queries.whereClause)
-    const kql = query.toSQL(knex)
+    const kql = resolver.toSQL(queries.whereClause, 'pg')
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where "name" = \'tjwebb\'')
   })
 
   it('should generate correct SQL for basic parameterized query without prefix', () => {
-    const query = new Query(queries.omitPrefixParameterized)
-    const kql = query.toSQL(knex, {
+    const kql = resolver.toSQL(queries.omitPrefixParameterized, 'pg', {
       nameArg: 'tjwebb'
     })
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where "name" = \'tjwebb\'')
   })
 
   it('should generate correct SQL for parameterized query', () => {
-    const query = new Query(queries.parameterized)
-    const kql = query.toSQL(knex, {
+    const kql = resolver.toSQL(queries.parameterized, 'pg', {
       nameArg: 'tjwebb'
     })
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where "name" = \'tjwebb\'')
   })
 
   it('should generate correct SQL for parameterized query with String type', () => {
-    const query = new Query(queries.parameterizedWithStringType)
-    const kql = query.toSQL(knex, {
+    const kql = resolver.toSQL(queries.parameterizedWithStringType, 'pg', {
       nameArg: 'tjwebb'
     })
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where "name" = \'tjwebb\'')
   })
 
   it('should generate correct SQL for parameterized query with Int type', () => {
-    const query = new Query(queries.parameterizedWithIntType)
-    const kql = query.toSQL(knex, {
+    const kql = resolver.toSQL(queries.parameterizedWithIntType, 'pg', {
       id: 1234
     })
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where "id" = \'1234\'')
@@ -114,16 +108,14 @@ describe('Basic/Parameterized GraphQL Queries', () => {
 
 
   it('should generate correct SQL for basic query with alias', () => {
-    const query = new Query(queries.basicAlias)
-    const kql = query.toSQL(knex, {
+    const kql = resolver.toSQL(queries.basicAlias, 'pg', {
       nameArg: 'tjwebb'
     })
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where "name" = \'tjwebb\'')
   })
 
   it('should generate correct SQL for basic query with IN list', () => {
-    const query = new Query(queries.parameterizedWithListType)
-    const kql = query.toSQL(knex, {
+    const kql = resolver.toSQL(queries.parameterizedWithListType, 'pg', {
       nameArg: [ 'tjwebb', 'admin' ]
     })
     assert.equal(kql.toString(), 'select "name", "favoriteColor" from "person" where "name" = ANY ( \'{"tjwebb","admin"}\' )')
