@@ -1,58 +1,131 @@
-# graphql-knex
+# graphql-knex-resolver
 
 [![NPM version][npm-image]][npm-url]
 [![Build status][ci-image]][ci-url]
 [![Dependency Status][daviddm-image]][daviddm-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
 
-GraphQL -> Knex.
+GraphQL Resolver built with Knex. Can be used to parse GraphQL ASTs into
+SQL, and as a resolver method standin in a GraphQL schema.
 
 ## Install
 
 ```sh
-$ npm install --save graphql-knex
+$ npm install --save graphql-knex-resolver
 ```
 
 ## Usage
 
+Do the stuff you'd normally do, but use the provided resolver method in your
+GraphQL schema.
+
+### 1. Initialize the Resolver
+
 ```js
-const Query = require('graphql-knex').Query
+const Resolver = require('graphql-knex-resolver')
 
 // setup knex
+const gql = require('graphql')
 const knex = require('knex')({
   client: 'pg',
   connection: {
     // ...
   }
 })
+const resolver = Resolver.getResolver(knex)
+```
 
-// create a graphql query
-const gqlQuery = new Query(`
-  query favoriteColorQuery ($name: String!) {
-    person(name: $name) {
-      name
-      favoriteColor
+### 2. Define the Schema
+
+```js
+// create the GraphQL schema using the resolver
+const userObject = new gql.GraphQLObjectType({
+  name: 'User',
+  fields: () => ({
+    username: {
+      type: gql.GraphQLString
     }
-  }`
-)
+  })
+})
+const userQuery = new gql.GraphQLObjectType({
+  name: 'UserQuery',
+  fields: () => ({
+    user: {
+      type: userObject,
+      resolve: resolver // <-------- use the resolver method
+    }
+  })
+})
+const userSchema = new gql.GraphQLSchema({
+  query: userQuery
+})
+```js
 
-// transform the graphql query to a knex query
-gqlQuery.toKnexQuery(knex, { name: 'tjwebb' })
-  .then(person => {
-    console.log(person.favoriteColor)
+### 3. Execute a Query
+```
+const findUserByUsername = `{
+  user (username: $username) {
+    id
+    username
+  }
+}`
+return gql.graphql(userSchema, findUserByUsername, {
+    username: "tjwebb"
+  })
+  .then(results => {
+    console.log(results)
   })
 ```
 
 ## API
 
-#### `new Query(query)`
+### `getResolver(engine)`
 
-Prepare a new GraphQL Query.
+Prepare a new GraphQL Query Resolver
 
-#### `.toKnexQuery(knex, params)`
+### `.toSQL(query, dialect, args)`
 
-Translate the GraphQL query to a [knex query object](http://knexjs.org/#Builder)
-and [bind parameters](http://knexjs.org/#Raw-Bindings).
+Translates a GraphQL query into SQL, irrespective of schema. Uses the
+root field name as the table.
+
+Dialect is one of:
+- `pg`
+- `mysql`
+- `sqlite3`
+
+#### Example
+
+Using the `findUserByUsername` query above.
+
+
+##### Simple Select Statement
+```js
+const sql = resolver.toSQL(findUserByUsername, 'pg', {
+  username: 'tjwebb'
+})
+// sql = select "username", from "user" where "name" = 'tjwebb'
+```
+
+##### Select Where In List Statement
+
+```js
+const sql = resolver.toSQL(queries.parameterizedWithListType, 'pg', {
+  username: [ 'tjwebb', 'admin' ]
+})
+// sql = select "username" from "user" where "name" = ANY ('{"tjwebb","admin"}')
+```
+
+Table name is inferred to be `user` since the root field is `user`. The following
+query would use the table name "foo":
+
+```js
+const findUserByUsername = `{
+  foo (username: $username) {
+    id
+    username
+  }
+}`
+```
 
 [npm-image]: https://img.shields.io/npm/v/graphql-knex.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/graphql-knex
