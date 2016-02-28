@@ -6,7 +6,8 @@
 [![Code Climate][codeclimate-image]][codeclimate-url]
 
 GraphQL Resolver built with Knex. Can be used to parse GraphQL ASTs into
-SQL, and as a resolver method standin in a GraphQL schema.
+SQL, and as a resolver method standin in a GraphQL schema. Supports whichever
+databases are supported by Knex.
 
 ## Install
 
@@ -75,6 +76,13 @@ return gql.graphql(userSchema, findUserByUsername, {
   })
   .then(results => {
     console.log(results)
+    // results = {
+    //   data: {
+    //     user: {
+    //       username: 'tjwebb'
+    //     }
+    //   }
+    // }
   })
 ```
 
@@ -89,15 +97,16 @@ Prepare a new GraphQL Query Resolver
 Translates a GraphQL query into SQL, irrespective of schema. Uses the
 root field name as the table.
 
-Dialect is one of:
+`dialect` is one of ([docs](http://knexjs.org/#Installation-node)):
 - `pg`
 - `mysql`
 - `sqlite3`
+- `oracle`
+- `mariasql`
 
 #### Example
 
-Using the `findUserByUsername` query above.
-
+Using the `findUserByUsername` query above:
 
 ##### Simple Select Statement
 
