@@ -1,0 +1,13 @@
+language: node_js
+- 4
+- stable
+
+deploy:
+  provider: npm
+  email: hello@trails.io
+  api_key:
+    secure: mfuvuBDi8/BriOpMhj+kWmdI+TaDRTOH+LOgVWEqXytsgfIBI6oEK31Tjp2c8Skmuvj3vKZJiGqAgqGbGPkRe8bQDHzCzuWjx5t9EGis7EjUUndiO6Sj1NOcwdu6bnZaxwcKWp4Ys8tPwauMQqp2O2zJboPnWNNItp9dqXw+xpqK75boPfbPsEdewrLWMh7r2YbORPJ7o2/s06g24pDQZ6DvRM9v09nKsh69zWF9NWZsQnQTbzXm1un8gvaSTamkea4MphHHzpmMeaj+IC8cPOpLv7FIqUtCXUiV0vKFLEmVOEP2JeQJ8BnTzDyZW9uZ9Em+8nTs57Bsa6Y4Lr3jRTWL7IE4uhVD/OWLp+OsT9J/A9QmsZevnQJNtZS94TCK0E/kVshRu/xobEcsvUW9Y/Q27bZgF+1k8WPlz2xM5loObKIZleCaJs6ilR1t5mRVEorAcaE1NiMCHqgL1gGnqRLTo3/OE8GW8fpRsxg93S+TikvGYBiyAPzXE855o618OG7ILIIdCT6rGsDlfwqF1Zur0FMRvOHm/JRXFLSujndvs6CgugBMMIjs74KZyFMHbFp0dxp2hS+x0BT5DSu4oXjhf8GpzgnceotRN+N68TDq+/a7Ds+IWbqA81QEjmsMKpQ3rJgLtuwmy2pkgb5c7KsVHbktVZIjcXeDgVz4D0c=
+  on:
+    tags: true
+    repo: tjwebb/graphql-knex
+    node: stable
