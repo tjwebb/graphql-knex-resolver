@@ -1,7 +1,7 @@
 {
-  "name": "trailpack-archetype",
+  "name": "graphql-knex-resolver",
   "version": "0.0.0",
-  "description": "GraphQL -> knex",
+  "description": "GraphQL Resolver built with Knex",
   "homepage": "",
   "author": {
     "name": "Travis Webb",
@@ -9,18 +9,19 @@
   },
   "main": "index.js",
   "keywords": [
-    "trailpack",
-    "trails",
-    "trailjs"
+    "graphql",
+    "relay",
+    "react",
+    "resolver",
+    "knex"
   ],
   "dependencies": {
     "graphql": "^0.4.18",
-    "lodash": "^4.5.1"
+    "knex": "^0.10.0"
   },
   "devDependencies": {
     "eslint": "^2.0.0-beta.1",
     "eslint-config-trails": "^1.0.1",
-    "knex": "^0.10.0",
     "mocha": "^2.3",
     "sqlite3": "^3.1.1"
   },
@@ -33,6 +34,6 @@
   "eslintConfig": {
     "extends": "trails"
   },
-  "repository": "git@github.com:trailsjs/graphql-knex.git",
+  "repository": "git@github.com:trailsjs/graphql-knex-resolver.git",
   "license": "MIT"
 }
