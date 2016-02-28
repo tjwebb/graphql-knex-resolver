@@ -10,9 +10,6 @@ describe.skip('Query', () => {
   before(() => {
     knex = require('knex')({
       client: 'sqlite3',
-      connection: {
-        filename: './testdb.sqlite'
-      },
       useNullAsDefault: true
     })
   })
@@ -31,11 +28,11 @@ describe.skip('Query', () => {
     })
   })
 
-  describe('#toKnexQuery', () => {
+  describe('#toSQL', () => {
     describe('SQL correctness', () => {
       it('should generate correct SQL for basic query', () => {
         const query = new Query(gqlA)
-        const kql = query.toKnexQuery(knex, {
+        const kql = query.toSQL(knex, {
           nameArg: 'tjwebb'
         })
 
