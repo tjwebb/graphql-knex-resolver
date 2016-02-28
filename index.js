@@ -12,7 +12,13 @@ exports.Query = class Query {
    * @param gql String
    */
   constructor (gql) {
-    this.ast = graphql.parse(gql)
+    try {
+      this.ast = graphql.parse(gql)
+    }
+    catch (e) {
+      this.ast = 'select 1'
+      throw e
+    }
 
     assert.equal(this.ast.kind, 'Document', 'The GraphQL query must be a complete Document')
   }

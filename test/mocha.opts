@@ -5,3 +5,4 @@
 --slow 50
 --globals app
 --fgrep app.js --invert
+--bail
