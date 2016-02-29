@@ -33,32 +33,61 @@ const knex = require('knex')({
     // ...
   }
 })
-const resolver = Resolver.getResolver(knex)
+const resolver = new Resolver(knex)
 ```
 
 ### 2. Define the Schema
 
 ```js
 // create the GraphQL schema using the resolver
-const userObject = new gql.GraphQLObjectType({
+const User = new gql.GraphQLObjectType({
   name: 'User',
   fields: () => ({
+    id: {
+      type: gql.GraphQLID
+    },
     username: {
+      type: gql.GraphQLString
+    },
+    roles: {
+      type: new gql.GraphQLList(Role),
+      resolve: resolver.relation({
+        foreignKey: 'user_id'
+      })
+    }
+  })
+})
+const Role = new gql.GraphQLObjectType({
+  name: 'Role',
+  fields: () => ({
+    id: {
+      type: gql.GraphQLID
+    },
+    name: {
       type: gql.GraphQLString
     }
   })
 })
-const userQuery = new gql.GraphQLObjectType({
-  name: 'UserQuery',
-  fields: () => ({
-    user: {
-      type: userObject,
-      resolve: resolver // <-------- use the resolver method
-    }
+const schema = new gql.GraphQLSchema({
+  query: new gql.GraphQLObjectType({
+    name: 'Query',
+    fields: () => ({
+      user: {
+        type: User,
+        resolve: resolver.object(),
+        args: {
+          // ...
+        }
+      },
+      role: {
+        type: Role,
+        resolve: resolver.object(),
+        args: {
+          // ...
+        }
+      }
+    })
   })
-})
-const userSchema = new gql.GraphQLSchema({
-  query: userQuery
 })
 ```
 
@@ -67,8 +96,10 @@ const userSchema = new gql.GraphQLSchema({
 ```js
 const findUserByUsername = `{
   user (username: $username) {
-    id
     username
+    roles {
+      name
+    }
   }
 }`
 return gql.graphql(userSchema, findUserByUsername, {
@@ -79,7 +110,10 @@ return gql.graphql(userSchema, findUserByUsername, {
     // results = {
     //   data: {
     //     user: {
-    //       username: 'tjwebb'
+    //       username: 'tjwebb',
+    //       roles: [
+    //         { name: 'admin' }
+    //       ]
     //     }
     //   }
     // }
@@ -88,11 +122,19 @@ return gql.graphql(userSchema, findUserByUsername, {
 
 ## API
 
-### `getResolver(engine)`
+### `new Resolver(knex)`
 
 Prepare a new GraphQL Query Resolver
 
-### `.toSQL(query, dialect, args)`
+### `object()`
+
+Return an object resolver
+
+### `relation(options)`
+
+Return a relation resolver.
+
+### `static .toSQL(query, dialect, args)`
 
 Translates a GraphQL query into SQL, irrespective of schema. Uses the
 root field name as the table.

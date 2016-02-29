@@ -5,15 +5,25 @@ const assert = require('assert')
 const graphql = require('graphql')
 const lib = require('./lib')
 
-module.exports = {
+module.exports = class Resolver {
 
-  getResolver (knex) {
+  constructor (knex) {
+    this.knex = knex
+  }
+
+  relation (relation) {
     return function (parent, args, options) {
-      console.log('getObjectResolver parent', parent)
-      console.log('getObjectResolver args', args)
-      console.log('getObjectResolver options', options)
+      console.log('getRelationResolver parent', parent)
+      console.log('getRelationResolver args', args)
+      //console.log('getRelationResolver options', options)
+      console.log('getRelationResolver fieldASTs', options.fieldASTs)
 
-      return lib.QueryBuilder.buildQuery(options, knex)
+      const doc = options.fieldASTs
+
+      const query = lib.QueryBuilder.buildSelect(doc, knex, options)
+        .where({ [relation.foreignKey]: parent.id })
+
+      return knex.raw(query.toString(), args)
         .then(result => {
           if (options.returnType instanceof graphql.GraphQLList) {
             return result
@@ -21,12 +31,32 @@ module.exports = {
           else {
             return result[0]
           }
-
         })
     }
-  },
+  }
 
-  toSQL(gql, dialect, args) {
+  object () {
+    return function (parent, args, options) {
+      console.log('getObjectResolver parent', parent)
+      console.log('getObjectResolver args', args)
+      //console.log('getObjectResolver options', options)
+      console.log('getObjectResolver fieldASTs', options.fieldASTs)
+
+      const doc = options.fieldASTs
+
+      return knex.raw(lib.QueryBuilder.buildSelect(doc, knex, options).toString(), args)
+        .then(result => {
+          if (options.returnType instanceof graphql.GraphQLList) {
+            return result
+          }
+          else {
+            return result[0]
+          }
+        })
+    }
+  }
+
+  static toSQL(gql, dialect, args) {
     let ast
     try {
       ast = graphql.parse(gql)
