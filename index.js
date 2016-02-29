@@ -12,18 +12,17 @@ module.exports = class Resolver {
   }
 
   relation (relation) {
-    return function (parent, args, options) {
+    return (parent, args, options) => {
       console.log('getRelationResolver parent', parent)
       console.log('getRelationResolver args', args)
       //console.log('getRelationResolver options', options)
       console.log('getRelationResolver fieldASTs', options.fieldASTs)
 
       const doc = options.fieldASTs
-
-      const query = lib.QueryBuilder.buildSelect(doc, knex, options)
+      const query = lib.QueryBuilder.buildSelect(doc, this.knex, options)
         .where({ [relation.foreignKey]: parent.id })
 
-      return knex.raw(query.toString(), args)
+      return this.knex.raw(query.toString(), args)
         .then(result => {
           if (options.returnType instanceof graphql.GraphQLList) {
             return result
@@ -36,15 +35,18 @@ module.exports = class Resolver {
   }
 
   object () {
-    return function (parent, args, options) {
+    return (parent, args, options) => {
       console.log('getObjectResolver parent', parent)
       console.log('getObjectResolver args', args)
       //console.log('getObjectResolver options', options)
-      console.log('getObjectResolver fieldASTs', options.fieldASTs)
+      //console.log('getObjectResolver fieldASTs', options.fieldASTs)
 
       const doc = options.fieldASTs
+      const query = lib.QueryBuilder.buildSelect(doc, this.knex, options)
 
-      return knex.raw(lib.QueryBuilder.buildSelect(doc, knex, options).toString(), args)
+      console.log('object query', query.toString())
+
+      return this.knex.raw(query.toString(), args)
         .then(result => {
           if (options.returnType instanceof graphql.GraphQLList) {
             return result

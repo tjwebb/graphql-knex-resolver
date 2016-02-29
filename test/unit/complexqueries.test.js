@@ -104,7 +104,7 @@ describe('Schema-Dependent GraphQL Queries', () => {
             type: gql.GraphQLID
           }
         },
-        resolve: Resolver.object()
+        resolve: resolver.object()
       }
     })
   })
@@ -137,14 +137,16 @@ describe('Schema-Dependent GraphQL Queries', () => {
     }`
   }
 
-  it.skip('single user query should return single user', () => {
+  it('single user query should return single user', () => {
     return gql.graphql(userSchema, queries.user).then(results => {
+      console.log('gql results', results.data)
       assert.equal(results.data.user.username, 'tjwebb')
     })
   })
 
-  it.skip('list user query should return many users', () => {
+  it('list user query should return many users', () => {
     return gql.graphql(userSchema, queries.userList).then(results => {
+      console.log('gql results', results.data)
       assert.equal(results.data.userList.length, 4)
     })
   })
