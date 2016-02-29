@@ -180,12 +180,12 @@ const findUserByUsername = `{
 }`
 ```
 
-[npm-image]: https://img.shields.io/npm/v/graphql-knex.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/graphql-knex
-[ci-image]: https://img.shields.io/travis/tjwebb/graphql-knex/master.svg?style=flat-square
-[ci-url]: https://travis-ci.org/tjwebb/graphql-knex
-[daviddm-image]: http://img.shields.io/david/tjwebb/graphql-knex.svg?style=flat-square
-[daviddm-url]: https://david-dm.org/tjwebb/graphql-knex
-[codeclimate-image]: https://img.shields.io/codeclimate/github/tjwebb/graphql-knex.svg?style=flat-square
-[codeclimate-url]: https://codeclimate.com/github/tjwebb/graphql-knex
+[npm-image]: https://img.shields.io/npm/v/graphql-knex-resolver.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/graphql-knex-resolver
+[ci-image]: https://img.shields.io/travis/tjwebb/graphql-knex-resolver/master.svg?style=flat-square
+[ci-url]: https://travis-ci.org/tjwebb/graphql-knex-resolver
+[daviddm-image]: http://img.shields.io/david/tjwebb/graphql-knex-resolver.svg?style=flat-square
+[daviddm-url]: https://david-dm.org/tjwebb/graphql-knex-resolver
+[codeclimate-image]: https://img.shields.io/codeclimate/github/tjwebb/graphql-knex-resolver.svg?style=flat-square
+[codeclimate-url]: https://codeclimate.com/github/tjwebb/graphql-knex-resolver
 
