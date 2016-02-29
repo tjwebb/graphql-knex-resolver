@@ -1,12 +1,11 @@
 'use strict'
 
-const util = require('util')
 const assert = require('assert')
 const Query = require('../../').Query
 
 describe.skip('Query', () => {
   let knex
-  
+
   before(() => {
     knex = require('knex')({
       client: 'sqlite3',

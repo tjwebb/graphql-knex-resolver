@@ -1,9 +1,7 @@
 'use strict'
 
-const util = require('util')
 const assert = require('assert')
 const gql = require('graphql')
-const lib = require('../../lib')
 const Resolver = require('../../')
 
 describe('Schema-Dependent GraphQL Queries', () => {
@@ -153,7 +151,7 @@ describe('Schema-Dependent GraphQL Queries', () => {
 
   it('user query with roles should return roles sublist', () => {
     return gql.graphql(userSchema, queries.userWithRoles, null, { username: 'tjwebb' }).then(results => {
-      console.log('gql results', results.data.user)
+      console.log('gql results', results)
       assert.equal(results.data.user.username, 'tjwebb')
       assert.equal(results.data.user.roles.length, 2)
     })

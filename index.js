@@ -1,6 +1,6 @@
 'use strict'
 
-const Knex = require('knex')
+const knex = require('knex')
 const assert = require('assert')
 const graphql = require('graphql')
 const lib = require('./lib')
@@ -12,17 +12,17 @@ module.exports = class Resolver {
   }
 
   relation (relation) {
+    const knex = this.knex
     return (parent, args, options) => {
-      console.log('getRelationResolver parent', parent)
-      console.log('getRelationResolver args', args)
-      //console.log('getRelationResolver options', options)
-      console.log('getRelationResolver fieldASTs', options.fieldASTs)
-
-      const doc = options.fieldASTs
-      const query = lib.QueryBuilder.buildSelect(doc, this.knex, options)
+      const query = lib.QueryBuilder.buildSelect(options.fieldASTs, knex, options)
         .where({ [relation.foreignKey]: parent.id })
 
-      return this.knex.raw(query.toString(), args)
+      /*
+      console.log('relation args: ', args)
+      console.log('relation options: ', options)
+      */
+
+      return knex.raw(query.toString(), args)
         .then(result => {
           if (options.returnType instanceof graphql.GraphQLList) {
             return result
@@ -35,18 +35,17 @@ module.exports = class Resolver {
   }
 
   object () {
+    const knex = this.knex
     return (parent, args, options) => {
-      console.log('getObjectResolver parent', parent)
-      console.log('getObjectResolver args', args)
-      //console.log('getObjectResolver options', options)
-      //console.log('getObjectResolver fieldASTs', options.fieldASTs)
+      const query = lib.QueryBuilder.buildSelect(options.fieldASTs, knex, options)
 
-      const doc = options.fieldASTs
-      const query = lib.QueryBuilder.buildSelect(doc, this.knex, options)
+      /*
+      console.log('object parent: ', parent)
+      console.log('object args: ', args)
+      console.log('object options: ', options)
+      */
 
-      console.log('object query', query.toString())
-
-      return this.knex.raw(query.toString(), args)
+      return knex.raw(query.toString(), args)
         .then(result => {
           if (options.returnType instanceof graphql.GraphQLList) {
             return result
@@ -69,9 +68,15 @@ module.exports = class Resolver {
 
     assert.equal(ast.kind, 'Document', 'The GraphQL query must be a complete Document')
 
-    const knex = Knex({ client: dialect })
+    const query = knex({ client: dialect })
+    const doc = ast.definitions[0].selectionSet.selections
+    const options = {
+      operation: {
+        variableDefinitions: ast.definitions[0].variableDefinitions
+      }
+    }
 
-    const sql = lib.QueryBuilder.buildSQL(ast, knex)
-    return knex.raw(sql, args || { }).toString()
+    const sql = lib.QueryBuilder.buildSelect(doc, query, options)
+    return query.raw(sql.toString(), args || { }).toString()
   }
 }
