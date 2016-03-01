@@ -132,28 +132,42 @@ describe('Schema-Dependent GraphQL Queries', () => {
           name
         }
       }
+    }`,
+    userListWithRoles: `query userWithRoles {
+      userList {
+        username
+        roles {
+          id
+          name
+        }
+      }
     }`
   }
 
   it('single user query should return single user', () => {
     return gql.graphql(userSchema, queries.user).then(results => {
-      console.log('gql results', results.data)
       assert.equal(results.data.user.username, 'tjwebb')
     })
   })
 
   it('list user query should return many users', () => {
     return gql.graphql(userSchema, queries.userList).then(results => {
-      console.log('gql results', results.data)
       assert.equal(results.data.userList.length, 4)
     })
   })
 
   it('user query with roles should return roles sublist', () => {
     return gql.graphql(userSchema, queries.userWithRoles, null, { username: 'tjwebb' }).then(results => {
-      console.log('gql results', results)
       assert.equal(results.data.user.username, 'tjwebb')
       assert.equal(results.data.user.roles.length, 2)
+    })
+  })
+
+  it('list user query with roles should return roles sublist', () => {
+    return gql.graphql(userSchema, queries.userListWithRoles, null, { username: 'tjwebb' }).then(results => {
+      console.log(results.data.userList)
+      assert.equal(results.data.userList.length, 4)
+      assert(results.data.userList[0].roles)
     })
   })
 
